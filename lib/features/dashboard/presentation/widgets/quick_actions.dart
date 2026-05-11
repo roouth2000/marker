@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/dashboard_bloc.dart';
 import '../../bloc/dashboard_event.dart';
+import '../../../inventory/presentation/screens/product_list_screen.dart';
+import '../../../invoices/presentation/screens/create_invoice_screen.dart';
 
 class QuickActions extends StatelessWidget {
   const QuickActions({super.key});
@@ -9,13 +11,13 @@ class QuickActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final actions = [
-      {'label': 'New Invoice', 'icon': Icons.description_outlined, 'color': Colors.blue, 'filter': 'Sales'},
+      {'label': 'New Invoice', 'icon': Icons.description_outlined, 'color': Colors.blue, 'action': 'invoice'},
       {'label': 'Purchase', 'icon': Icons.shopping_cart_outlined, 'color': Colors.orange, 'filter': 'Purchase'},
       {'label': 'Receipt', 'icon': Icons.receipt_long_outlined, 'color': Colors.green, 'filter': 'Receipt'},
       {'label': 'Payment', 'icon': Icons.payments_outlined, 'color': Colors.red, 'filter': 'Payment'},
-      {'label': 'Parties', 'icon': Icons.people_outline, 'color': Colors.purple, 'filter': null},
-      {'label': 'Stock', 'icon': Icons.inventory_2_outlined, 'color': Colors.indigo, 'filter': null},
-      {'label': 'Reports', 'icon': Icons.analytics_outlined, 'color': Colors.teal, 'filter': null},
+      {'label': 'Parties', 'icon': Icons.people_outline, 'color': Colors.purple, 'tab': 2},
+      {'label': 'Stock', 'icon': Icons.inventory_2_outlined, 'color': Colors.indigo, 'action': 'stock'},
+      {'label': 'Reports', 'icon': Icons.analytics_outlined, 'color': Colors.teal, 'tab': 3},
       {'label': 'Vouchers', 'icon': Icons.confirmation_number_outlined, 'color': Colors.brown, 'filter': 'All'},
     ];
 
@@ -50,10 +52,12 @@ class QuickActions extends StatelessWidget {
                 onTap: () {
                   if (action['filter'] != null) {
                     context.read<DashboardBloc>().add(NavigateToVouchers(action['filter'] as String));
-                  } else if (action['label'] == 'Parties') {
-                    context.read<DashboardBloc>().add(const TabChanged(2));
-                  } else if (action['label'] == 'Reports') {
-                    context.read<DashboardBloc>().add(const TabChanged(3));
+                  } else if (action['tab'] != null) {
+                    context.read<DashboardBloc>().add(TabChanged(action['tab'] as int));
+                  } else if (action['action'] == 'stock') {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const ProductListScreen()));
+                  } else if (action['action'] == 'invoice') {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const CreateInvoiceScreen()));
                   }
                 },
                 child: Column(

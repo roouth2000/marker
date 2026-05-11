@@ -35,24 +35,46 @@ class _DashboardScreenState extends State<DashboardScreen> {
               index: state.currentTabIndex,
               children: _tabs,
             ),
-            floatingActionButton: FloatingActionButton(
-              onPressed: () {},
-              backgroundColor: const Color(0xFF3B82F6),
-              shape: const CircleBorder(),
-              child: const Icon(Icons.add, color: Colors.white, size: 30),
+            floatingActionButton: Container(
+              height: 64,
+              width: 64,
+              child: FloatingActionButton(
+                onPressed: () {},
+                backgroundColor: const Color(0xFF3B82F6),
+                elevation: 4,
+                shape: const CircleBorder(),
+                child: const Icon(Icons.add, color: Colors.white, size: 32),
+              ),
             ),
             floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
             bottomNavigationBar: BottomAppBar(
+              height: 70,
+              padding: EdgeInsets.zero,
+              color: Colors.white,
               shape: const CircularNotchedRectangle(),
-              notchMargin: 8,
+              notchMargin: 10,
+              elevation: 20,
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  _buildNavItem(context, 0, Icons.grid_view_rounded, 'Home', state.currentTabIndex),
-                  _buildNavItem(context, 1, Icons.confirmation_number_outlined, 'Vouchers', state.currentTabIndex),
-                  const SizedBox(width: 40), // Space for FAB
-                  _buildNavItem(context, 2, Icons.people_outline, 'Parties', state.currentTabIndex),
-                  _buildNavItem(context, 3, Icons.analytics_outlined, 'Reports', state.currentTabIndex),
+                  Expanded(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        _buildNavItem(context, 0, Icons.grid_view_rounded, 'Home', state.currentTabIndex),
+                        _buildNavItem(context, 1, Icons.confirmation_number_outlined, 'Vouchers', state.currentTabIndex),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 80), // Increased space for the notched FAB
+                  Expanded(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        _buildNavItem(context, 2, Icons.people_outline, 'Parties', state.currentTabIndex),
+                        _buildNavItem(context, 3, Icons.analytics_outlined, 'Reports', state.currentTabIndex),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -64,26 +86,32 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Widget _buildNavItem(BuildContext context, int index, IconData icon, String label, int currentIndex) {
     final isSelected = currentIndex == index;
-    return InkWell(
-      onTap: () => context.read<DashboardBloc>().add(TabChanged(index)),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              icon,
-              color: isSelected ? const Color(0xFF3B82F6) : const Color(0xFF64748B),
-            ),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 12,
-                color: isSelected ? const Color(0xFF3B82F6) : const Color(0xFF64748B),
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => context.read<DashboardBloc>().add(TabChanged(index)),
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          width: 60,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                size: 22,
+                color: isSelected ? const Color(0xFF3B82F6) : const Color(0xFF94A3B8),
               ),
-            ),
-          ],
+              const SizedBox(height: 4),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 10,
+                  color: isSelected ? const Color(0xFF3B82F6) : const Color(0xFF94A3B8),
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

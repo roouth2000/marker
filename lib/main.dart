@@ -3,16 +3,16 @@ import 'core/theme/app_theme.dart';
 import 'features/auth/login/screens/login_screen.dart';
 
 void main() {
-  runApp(const TreetPayApp());
+  runApp(const LedgerBookApp());
 }
 
-class TreetPayApp extends StatelessWidget {
-  const TreetPayApp({super.key});
+class LedgerBookApp extends StatelessWidget {
+  const LedgerBookApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'TreetPay',
+      title: 'LedgerBook',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       home: const LoginScreen(),
