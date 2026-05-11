@@ -1,69 +1,104 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/app_colors.dart';
 
 class InvoiceDetailsScreen extends StatelessWidget {
   final String invoiceId;
 
-  const InvoiceDetailsScreen({
-    super.key,
-    required this.invoiceId,
-  });
+  const InvoiceDetailsScreen({super.key, required this.invoiceId});
+
+  static const _items = [
+    ('Basmati Rice 25kg', '@ ₹1,850/bag', 4, 7400.0),
+    ('Sunflower Oil 5L', '@ ₹850/can', 6, 5100.0),
+  ];
 
   @override
   Widget build(BuildContext context) {
+    const subtotal = 12500.0;
+    const gst = subtotal * 0.18;
+    const total = subtotal + gst;
+
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
-      appBar: AppBar(
-        backgroundColor: AppColors.navyBlue,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text(
-          invoiceId,
-          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Stack(
+      backgroundColor: AppColors.scaffold,
+      body: Stack(
+        children: [
+          Container(height: 220, decoration: const BoxDecoration(gradient: AppColors.headerGradient)),
+          SafeArea(
+            bottom: false,
+            child: Column(
               children: [
-                Container(height: 100, color: AppColors.navyBlue),
-                _buildInvoiceCard(),
+                _buildAppBar(context),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.only(bottom: 120),
+                    physics: const BouncingScrollPhysics(),
+                    child: Column(
+                      children: [
+                        _buildCard(subtotal, gst, total),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
-            const SizedBox(height: 30),
-            _buildActionButtons(),
-            const SizedBox(height: 100),
-          ],
-        ),
+          ),
+        ],
+      ),
+      bottomNavigationBar: _buildBottomActions(),
+    );
+  }
+
+  Widget _buildAppBar(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: () => Navigator.pop(context),
+            child: Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(Icons.arrow_back_rounded, color: Colors.white, size: 20),
+            ),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Text(
+              invoiceId,
+              style: GoogleFonts.inter(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w700),
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            decoration: BoxDecoration(
+              color: AppColors.error.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: AppColors.error.withOpacity(0.5)),
+            ),
+            child: Text('DUE', style: GoogleFonts.inter(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w700)),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildInvoiceCard() {
+  Widget _buildCard(double subtotal, double gst, double total) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      margin: const EdgeInsets.fromLTRB(20, 10, 20, 0),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.07), blurRadius: 20, offset: const Offset(0, 8))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header Section
+          // From / To
           Padding(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(22),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -71,78 +106,78 @@ class InvoiceDetailsScreen extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Shankar Traders',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
-                    ),
-                    const SizedBox(height: 5),
-                    const Text(
-                      '12, MG Road, Bengaluru, KA 560001',
-                      style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
-                    ),
-                    const Text(
-                      'GSTIN: 29ABCDE1234F2Z5',
-                      style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
-                    ),
+                    Text('FROM', style: GoogleFonts.inter(fontSize: 10, color: AppColors.textMuted, fontWeight: FontWeight.w700, letterSpacing: 1)),
+                    const SizedBox(height: 4),
+                    Text('Shankar Traders', style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+                    Text('GSTIN: 29ABCDE1234F2Z5', style: GoogleFonts.inter(fontSize: 10, color: AppColors.textMuted)),
+                    Text('MG Road, Bengaluru', style: GoogleFonts.inter(fontSize: 10, color: AppColors.textMuted)),
                   ],
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: Colors.red.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: const Text(
-                    'DUE',
-                    style: TextStyle(color: Colors.red, fontSize: 10, fontWeight: FontWeight.bold),
-                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text('DATE', style: GoogleFonts.inter(fontSize: 10, color: AppColors.textMuted, fontWeight: FontWeight.w700, letterSpacing: 1)),
+                    const SizedBox(height: 4),
+                    Text('11 May 2026', style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+                    const SizedBox(height: 8),
+                    Text('BILL TO', style: GoogleFonts.inter(fontSize: 10, color: AppColors.textMuted, fontWeight: FontWeight.w700, letterSpacing: 1)),
+                    const SizedBox(height: 4),
+                    Text('Anand Kirana Stores', style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.primary)),
+                  ],
                 ),
               ],
             ),
           ),
-          const Divider(height: 1),
-          // Billing Info
-          Padding(
-            padding: const EdgeInsets.all(24),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          // Item table
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 22),
+            decoration: BoxDecoration(
+              color: AppColors.surfaceLight,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
               children: [
-                _buildLabelValue('BILL TO', 'Anand Kirana Stores'),
-                _buildLabelValue('DATE', '11 May 2026', crossAxisAlignment: CrossAxisAlignment.end),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  child: Row(
+                    children: [
+                      Expanded(flex: 4, child: Text('ITEM', style: GoogleFonts.inter(fontSize: 10, color: AppColors.textMuted, fontWeight: FontWeight.w700))),
+                      Expanded(child: Center(child: Text('QTY', style: GoogleFonts.inter(fontSize: 10, color: AppColors.textMuted, fontWeight: FontWeight.w700)))),
+                      Expanded(flex: 2, child: Align(alignment: Alignment.centerRight, child: Text('AMOUNT', style: GoogleFonts.inter(fontSize: 10, color: AppColors.textMuted, fontWeight: FontWeight.w700)))),
+                    ],
+                  ),
+                ),
+                const Divider(height: 1),
+                ..._items.map((item) => _itemRow(item.$1, item.$2, item.$3, item.$4)),
               ],
             ),
           ),
-          // Items Table
-          _buildItemsTable(),
-          // Totals Section
+          // Totals
           Padding(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(22),
             child: Column(
               children: [
-                _buildSummaryRow('Subtotal', '₹12,500'),
-                const SizedBox(height: 10),
-                _buildSummaryRow('GST 18%', '₹2,250'),
-                const Divider(height: 30),
+                _totalRow('Subtotal', '₹${subtotal.toStringAsFixed(0)}'),
+                const SizedBox(height: 8),
+                _totalRow('GST 18%', '₹${gst.toStringAsFixed(0)}'),
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 14),
+                  child: Divider(),
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
-                      'Total',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
-                    ),
-                    const Text(
-                      '₹14,750',
-                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
-                    ),
+                    Text('Total', style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w800, color: AppColors.textPrimary)),
+                    Text('₹${total.toStringAsFixed(0)}', style: GoogleFonts.inter(fontSize: 22, fontWeight: FontWeight.w800, color: AppColors.primary)),
                   ],
                 ),
-                const SizedBox(height: 20),
-                const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    '|  Net 15 days',
-                    style: TextStyle(color: AppColors.textSecondary, fontStyle: FontStyle.italic, fontSize: 12),
-                  ),
+                const SizedBox(height: 14),
+                Row(
+                  children: [
+                    Container(width: 3, height: 16, decoration: BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.circular(4))),
+                    const SizedBox(width: 8),
+                    Text('Net 15 days', style: GoogleFonts.inter(fontSize: 12, color: AppColors.textMuted, fontStyle: FontStyle.italic)),
+                  ],
                 ),
               ],
             ),
@@ -152,79 +187,29 @@ class InvoiceDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildLabelValue(String label, String value, {CrossAxisAlignment crossAxisAlignment = CrossAxisAlignment.start}) {
-    return Column(
-      crossAxisAlignment: crossAxisAlignment,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(fontSize: 10, color: AppColors.textMuted, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 5),
-        Text(
-          value,
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildItemsTable() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 24),
-      decoration: BoxDecoration(
-        color: AppColors.surfaceLight.withOpacity(0.5),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.borderLight),
-      ),
-      child: Column(
-        children: [
-          // Table Header
-          const Padding(
-            padding: EdgeInsets.all(12),
-            child: Row(
-              children: [
-                Expanded(flex: 3, child: Text('ITEM', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.textSecondary))),
-                Expanded(child: Center(child: Text('QTY', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.textSecondary)))),
-                Expanded(flex: 2, child: Align(alignment: Alignment.centerRight, child: Text('AMOUNT', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.textSecondary)))),
-              ],
-            ),
-          ),
-          const Divider(height: 1),
-          // Rows
-          _buildItemRow('Basmati Rice 25kg', '@ ₹1,850/bag', '4', '₹7,400'),
-          const Divider(height: 1),
-          _buildItemRow('Sunflower Oil 5L', '@ ₹850/can', '6', '₹5,100'),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildItemRow(String name, String sub, String qty, String amount) {
+  Widget _itemRow(String name, String sub, int qty, double amount) {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       child: Row(
         children: [
           Expanded(
-            flex: 3,
+            flex: 4,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textPrimary)),
-                Text(sub, style: const TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+                Text(name, style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+                Text(sub, style: GoogleFonts.inter(fontSize: 11, color: AppColors.textMuted)),
               ],
             ),
           ),
           Expanded(
-            child: Center(
-              child: Text(qty, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textPrimary)),
-            ),
+            child: Center(child: Text('$qty', style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.textPrimary))),
           ),
           Expanded(
             flex: 2,
             child: Align(
               alignment: Alignment.centerRight,
-              child: Text(amount, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textPrimary)),
+              child: Text('₹${amount.toStringAsFixed(0)}', style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
             ),
           ),
         ],
@@ -232,60 +217,56 @@ class InvoiceDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSummaryRow(String label, String value) {
+  Widget _totalRow(String label, String value) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: const TextStyle(fontSize: 14, color: AppColors.textSecondary)),
-        Text(value, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+        Text(label, style: GoogleFonts.inter(fontSize: 14, color: AppColors.textSecondary)),
+        Text(value, style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
       ],
     );
   }
 
-  Widget _buildActionButtons() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+  Widget _buildBottomActions() {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        boxShadow: [BoxShadow(color: Color(0x10000000), blurRadius: 12, offset: Offset(0, -3))],
+      ),
       child: Row(
         children: [
           Expanded(
             child: SizedBox(
-              height: 56,
+              height: 52,
               child: OutlinedButton(
                 onPressed: () {},
                 style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: AppColors.borderLight),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  side: const BorderSide(color: AppColors.border),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                   backgroundColor: Colors.white,
                 ),
-                child: const Text(
-                  'Duplicate',
-                  style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 16),
-                ),
+                child: Text('Duplicate', style: GoogleFonts.inter(color: AppColors.textPrimary, fontWeight: FontWeight.w700, fontSize: 15)),
               ),
             ),
           ),
-          const SizedBox(width: 15),
+          const SizedBox(width: 14),
           Expanded(
             child: Container(
-              height: 56,
+              height: 52,
               decoration: BoxDecoration(
                 gradient: AppColors.primaryGradient,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.primaryBlue.withOpacity(0.3),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
+                borderRadius: BorderRadius.circular(14),
+                boxShadow: [BoxShadow(color: AppColors.primary.withOpacity(0.3), blurRadius: 12, offset: const Offset(0, 4))],
               ),
               child: ElevatedButton.icon(
                 onPressed: () {},
-                icon: const Icon(Icons.picture_as_pdf, color: Colors.white, size: 20),
-                label: const Text('Download PDF', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+                icon: const Icon(Icons.picture_as_pdf_rounded, color: Colors.white, size: 18),
+                label: Text('Download PDF', style: GoogleFonts.inter(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 15)),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.transparent,
                   shadowColor: Colors.transparent,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                 ),
               ),
             ),

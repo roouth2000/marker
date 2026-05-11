@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../shared/widgets/custom_button.dart';
-import '../../../../shared/widgets/custom_text_field.dart';
-import '../../../../shared/widgets/social_button.dart';
 import '../../bloc/login/login_bloc.dart';
 import '../../bloc/login/login_event.dart';
 import '../../bloc/login/login_state.dart';
-import '../../register/screens/register_screen.dart';
 import '../../../dashboard/presentation/screens/dashboard_screen.dart';
 
 class LoginForm extends StatefulWidget {
@@ -18,8 +15,8 @@ class LoginForm extends StatefulWidget {
 }
 
 class _LoginFormState extends State<LoginForm> {
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final _emailController = TextEditingController(text: 'adminledgerbill@gmail.com');
+  final _passwordController = TextEditingController(text: 'password');
   final _formKey = GlobalKey<FormState>();
   bool _obscurePassword = true;
 
@@ -33,55 +30,48 @@ class _LoginFormState extends State<LoginForm> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(30.0),
+      padding: const EdgeInsets.fromLTRB(28, 32, 28, 24),
       child: Form(
         key: _formKey,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CustomTextField(
-              label: 'Mobile or email',
-              hintText: '+91 98450 12345',
-              prefixIcon: Icons.phone_android,
+            _buildLabel('Email address'),
+            const SizedBox(height: 8),
+            _buildTextField(
               controller: _emailController,
-              validator: (val) => val != null && val.isNotEmpty ? null : 'Required',
+              hint: 'you@example.com',
+              icon: Icons.email_outlined,
             ),
             const SizedBox(height: 20),
-            CustomTextField(
-              label: 'Password',
-              hintText: '........',
-              prefixIcon: Icons.lock_outline,
-              isPassword: _obscurePassword,
+            _buildLabel('Password'),
+            const SizedBox(height: 8),
+            _buildTextField(
               controller: _passwordController,
-              suffixIcon: IconButton(
-                icon: Icon(
-                  _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-                  size: 20,
-                  color: AppColors.textSecondary,
-                ),
-                onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
-              ),
-              validator: (val) => val != null && val.length >= 6 ? null : 'Password too short',
+              hint: 'Enter password',
+              icon: Icons.lock_outline_rounded,
+              isPassword: true,
             ),
+            const SizedBox(height: 8),
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(
                 onPressed: () {},
-                child: const Text(
+                style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                child: Text(
                   'Forgot password?',
-                  style: TextStyle(color: AppColors.textLink, fontSize: 13),
+                  style: GoogleFonts.inter(
+                    color: AppColors.primary,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
             BlocConsumer<LoginBloc, LoginState>(
               listener: (context, state) {
                 if (state.status == LoginStatus.success) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Login Successful!'),
-                      backgroundColor: Colors.green,
-                    ),
-                  );
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => const DashboardScreen()),
@@ -89,85 +79,174 @@ class _LoginFormState extends State<LoginForm> {
                 } else if (state.status == LoginStatus.failure) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text(state.errorMessage ?? 'Login Failed'),
-                      backgroundColor: Colors.red,
+                      content: Text(state.errorMessage ?? 'Login failed. Try again.'),
+                      backgroundColor: AppColors.error,
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
                   );
                 }
               },
               builder: (context, state) {
-                return CustomButton(
-                  text: 'Sign in',
-                  isLoading: state.status == LoginStatus.loading,
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      context.read<LoginBloc>().add(
-                            LoginSubmitted(
-                              email: _emailController.text,
-                              password: _passwordController.text,
-                            ),
-                          );
-                    }
-                  },
-                );
+                final isLoading = state.status == LoginStatus.loading;
+                return _buildSignInButton(context, isLoading);
               },
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 32),
             Row(
               children: [
-                Expanded(child: Divider(color: AppColors.borderLight)),
+                Expanded(child: Divider(color: AppColors.border, thickness: 1)),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
                   child: Text(
-                    'or continue with',
-                    style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
+                    'or',
+                    style: GoogleFonts.inter(color: AppColors.textMuted, fontSize: 13),
                   ),
                 ),
-                Expanded(child: Divider(color: AppColors.borderLight)),
+                Expanded(child: Divider(color: AppColors.border, thickness: 1)),
               ],
             ),
-            const SizedBox(height: 30),
-            Row(
-              children: [
-                SocialButton(
-                  text: 'Google',
-                  iconPath: 'assets/google.png',
-                  onPressed: () {},
-                ),
-                const SizedBox(width: 15),
-                SocialButton(
-                  text: 'Apple',
-                  iconPath: 'assets/apple.png',
-                  onPressed: () {},
-                ),
-              ],
-            ),
-            const SizedBox(height: 40),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  'New here? ',
-                  style: TextStyle(color: AppColors.textSecondary),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const RegisterScreen()),
-                    );
-                  },
-                  child: const Text(
-                    'Create account',
-                    style: TextStyle(
-                      color: AppColors.textLink,
-                      fontWeight: FontWeight.bold,
-                    ),
+            const SizedBox(height: 24),
+            _buildGoogleButton(),
+            const SizedBox(height: 36),
+            Center(
+              child: GestureDetector(
+                onTap: () {},
+                child: RichText(
+                  text: TextSpan(
+                    text: "Don't have an account? ",
+                    style: GoogleFonts.inter(color: AppColors.textSecondary, fontSize: 14),
+                    children: [
+                      TextSpan(
+                        text: 'Create account',
+                        style: GoogleFonts.inter(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
+              ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLabel(String text) {
+    return Text(
+      text,
+      style: GoogleFonts.inter(
+        color: AppColors.textPrimary,
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String hint,
+    required IconData icon,
+    bool isPassword = false,
+  }) {
+    return TextFormField(
+      controller: controller,
+      obscureText: isPassword ? _obscurePassword : false,
+      style: GoogleFonts.inter(color: AppColors.textPrimary, fontSize: 15),
+      decoration: InputDecoration(
+        hintText: hint,
+        prefixIcon: Icon(icon, color: AppColors.textMuted, size: 20),
+        suffixIcon: isPassword
+            ? IconButton(
+                icon: Icon(
+                  _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                  color: AppColors.textMuted,
+                  size: 20,
+                ),
+                onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+              )
+            : null,
+      ),
+      validator: (val) => val == null || val.isEmpty ? 'Required' : null,
+    );
+  }
+
+  Widget _buildSignInButton(BuildContext context, bool isLoading) {
+    return SizedBox(
+      width: double.infinity,
+      height: 54,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          gradient: AppColors.primaryGradient,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.primary.withOpacity(0.35),
+              blurRadius: 16,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: ElevatedButton(
+          onPressed: isLoading
+              ? null
+              : () {
+                  if (_formKey.currentState!.validate()) {
+                    context.read<LoginBloc>().add(
+                          LoginSubmitted(
+                            email: _emailController.text,
+                            password: _passwordController.text,
+                          ),
+                        );
+                  }
+                },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.transparent,
+            shadowColor: Colors.transparent,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          ),
+          child: isLoading
+              ? const SizedBox(
+                  height: 22,
+                  width: 22,
+                  child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                )
+              : Text(
+                  'Sign in',
+                  style: GoogleFonts.inter(
+                    color: Colors.white,
+                    fontSize: 17,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGoogleButton() {
+    return SizedBox(
+      width: double.infinity,
+      height: 52,
+      child: OutlinedButton.icon(
+        onPressed: () {},
+        icon: const Icon(Icons.g_mobiledata, size: 26, color: AppColors.textPrimary),
+        label: Text(
+          'Continue with Google',
+          style: GoogleFonts.inter(
+            color: AppColors.textPrimary,
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        style: OutlinedButton.styleFrom(
+          side: const BorderSide(color: AppColors.border, width: 1.5),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          backgroundColor: Colors.white,
         ),
       ),
     );

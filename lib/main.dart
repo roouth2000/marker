@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'core/theme/app_theme.dart';
-import 'features/auth/login/screens/login_screen.dart';
+import 'features/auth/splash/splash_screen.dart';
 
 void main() {
   runApp(const LedgerBookApp());
@@ -15,7 +15,7 @@ class LedgerBookApp extends StatelessWidget {
       title: 'LedgerBook',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      home: const LoginScreen(),
+      home: const SplashScreen(),
     );
   }
 }

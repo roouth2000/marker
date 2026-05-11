@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../screens/party_details_screen.dart';
 
 class PartyListItem extends StatelessWidget {
@@ -21,71 +23,70 @@ class PartyListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDue = status == 'due' || status == 'DUE';
+    final isSettled = !isDue;
+
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      padding: const EdgeInsets.all(4), // Reduced padding to allow InkWell to cover area
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8, offset: const Offset(0, 2)),
+        ],
       ),
       child: InkWell(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(18),
         onTap: () {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => PartyDetailsScreen(
-                partyName: name,
-                dueAmount: amount,
-              ),
+              builder: (_) => PartyDetailsScreen(partyName: name, dueAmount: amount),
             ),
           );
         },
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           child: Row(
             children: [
               Container(
-                width: 48,
-                height: 48,
+                width: 46,
+                height: 46,
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
+                  color: color.withOpacity(0.12),
+                  borderRadius: BorderRadius.circular(14),
                 ),
                 alignment: Alignment.center,
                 child: Text(
                   initial,
-                  style: TextStyle(
+                  style: GoogleFonts.inter(
                     color: color,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 14),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       name,
-                      style: const TextStyle(
+                      style: GoogleFonts.inter(
                         fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF1E293B),
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textPrimary,
                       ),
                     ),
+                    const SizedBox(height: 2),
                     Row(
                       children: [
-                        const Icon(Icons.phone, size: 12, color: Color(0xFF64748B)),
+                        Icon(Icons.phone_outlined, size: 12, color: AppColors.textMuted),
                         const SizedBox(width: 4),
                         Text(
                           phone,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: Color(0xFF64748B),
-                          ),
+                          style: GoogleFonts.inter(fontSize: 11, color: AppColors.textMuted),
                         ),
                       ],
                     ),
@@ -97,20 +98,28 @@ class PartyListItem extends StatelessWidget {
                 children: [
                   Text(
                     amount,
-                    style: TextStyle(
+                    style: GoogleFonts.inter(
                       fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: amount == 'SETTLED' ? Colors.green : const Color(0xFFE11D48),
+                      fontWeight: FontWeight.w700,
+                      color: isSettled ? AppColors.success : AppColors.error,
                     ),
                   ),
-                  if (status.isNotEmpty)
-                    Text(
-                      status,
-                      style: const TextStyle(
+                  const SizedBox(height: 3),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: isSettled ? AppColors.successLight : AppColors.errorLight,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      isSettled ? 'SETTLED' : 'DUE',
+                      style: GoogleFonts.inter(
                         fontSize: 10,
-                        color: Color(0xFF64748B),
+                        fontWeight: FontWeight.w700,
+                        color: isSettled ? AppColors.success : AppColors.error,
                       ),
                     ),
+                  ),
                 ],
               ),
             ],

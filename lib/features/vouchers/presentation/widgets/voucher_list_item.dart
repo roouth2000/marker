@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../invoices/presentation/screens/invoice_details_screen.dart';
 
 class VoucherListItem extends StatelessWidget {
@@ -23,56 +25,52 @@ class VoucherListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isPaid = status == 'PAID';
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8, offset: const Offset(0, 2)),
+        ],
       ),
       child: InkWell(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(18),
         onTap: () {
-          // Extract invoice ID if available, otherwise use a generic one
           final id = subtitle.split('•').first.trim();
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => InvoiceDetailsScreen(invoiceId: id.contains('-') ? id : 'INV-1042'),
+              builder: (_) => InvoiceDetailsScreen(invoiceId: id.contains('-') ? id : 'INV-1042'),
             ),
           );
         },
         child: Padding(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           child: Row(
             children: [
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   color: iconColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(14),
                 ),
-                child: Icon(icon, color: iconColor, size: 24),
+                child: Icon(icon, color: iconColor, size: 22),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 14),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       title,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF1E293B),
-                      ),
+                      style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
                     ),
+                    const SizedBox(height: 2),
                     Text(
                       subtitle,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Color(0xFF64748B),
-                      ),
+                      style: GoogleFonts.inter(fontSize: 11, color: AppColors.textMuted),
                     ),
                   ],
                 ),
@@ -81,19 +79,27 @@ class VoucherListItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    '${isNegative ? '-' : '+'}$amount',
-                    style: TextStyle(
+                    '${isNegative ? '-' : '+'} $amount',
+                    style: GoogleFonts.inter(
                       fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: isNegative ? const Color(0xFFE11D48) : const Color(0xFF10B981),
+                      fontWeight: FontWeight.w700,
+                      color: isNegative ? AppColors.error : AppColors.success,
                     ),
                   ),
-                  Text(
-                    status,
-                    style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                      color: status == 'DUE' ? Colors.red : (status == 'PARTIAL' ? Colors.orange : Colors.green),
+                  const SizedBox(height: 3),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: isPaid ? AppColors.successLight : AppColors.errorLight,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      status,
+                      style: GoogleFonts.inter(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        color: isPaid ? AppColors.success : AppColors.error,
+                      ),
                     ),
                   ),
                 ],
