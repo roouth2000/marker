@@ -27,23 +27,31 @@ class LoginHeader extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
                 child: Image.asset(
                   'assets/logo.png',
-                  height: 48,
-                  width: 48,
+                  height: 50,
+                  width: 50,
                   errorBuilder: (context, error, stackTrace) => Container(
-                    height: 48,
-                    width: 48,
+                    height: 50,
+                    width: 50,
                     color: Colors.white24,
-                    child: const Icon(Icons.account_balance_wallet, color: Colors.white),
+                    child: const Icon(
+                      Icons.account_balance_wallet,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
               const SizedBox(width: 12),
-              Text(
-                'LedgerBook',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'TreetPay',
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -51,16 +59,16 @@ class LoginHeader extends StatelessWidget {
           Text(
             'Welcome back',
             style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           const SizedBox(height: 8),
           Text(
             'Sign in to manage your billing & accounts',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.white70,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: Colors.white70),
           ),
         ],
       ),

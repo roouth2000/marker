@@ -8,6 +8,7 @@ import '../../bloc/login/login_bloc.dart';
 import '../../bloc/login/login_event.dart';
 import '../../bloc/login/login_state.dart';
 import '../../register/screens/register_screen.dart';
+import '../../../dashboard/presentation/screens/dashboard_screen.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -76,11 +77,21 @@ class _LoginFormState extends State<LoginForm> {
               listener: (context, state) {
                 if (state.status == LoginStatus.success) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Login Successful!')),
+                    const SnackBar(
+                      content: Text('Login Successful!'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const DashboardScreen()),
                   );
                 } else if (state.status == LoginStatus.failure) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(state.errorMessage ?? 'Login Failed')),
+                    SnackBar(
+                      content: Text(state.errorMessage ?? 'Login Failed'),
+                      backgroundColor: Colors.red,
+                    ),
                   );
                 }
               },

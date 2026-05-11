@@ -16,7 +16,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     // Simulate API call
     await Future.delayed(const Duration(seconds: 2));
 
-    if (event.email == "test@test.com" && event.password == "password") {
+    final bool isAuthorized = (event.email == "adminledgerbill@gmail.com" || event.email == "test@test.com") && 
+                               event.password == "password";
+
+    if (isAuthorized) {
       emit(state.copyWith(status: LoginStatus.success));
     } else {
       emit(state.copyWith(
